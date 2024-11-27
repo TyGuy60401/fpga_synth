@@ -1,0 +1,2 @@
+memory_initialization_radix=16;
+memory_initialization_vector=800, 8cb, 995, a5b, b1b, bd3, c81, d24, dba, e41, eb8, f1e, f72, fb3, fe0, ffa, fff, ff0, fcc, f95, f4a, eed, e7e, dff, d70, cd4, c2b, b78, abc, 9f9, 931, 866, 799, 6ce, 606, 543, 487, 3d4, 32b, 28f, 200, 181, 112, b5, 6a, 33, f, 0, 5, 1f, 4c, 8d, e1, 147, 1be, 245, 2db, 37e, 42c, 4e4, 5a4, 66a, 734, 7ff
