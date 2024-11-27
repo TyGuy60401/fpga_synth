@@ -36,6 +36,7 @@ entity Top is
     Port ( S_OUT : out STD_LOGIC;
            SYNC : out STD_LOGIC;
            SCK : out STD_LOGIC;
+           LED : out STD_LOGIC_VECTOR (7 downto 0);
            CLK : in STD_LOGIC;
            RST : in STD_LOGIC;
            S_IN : in STD_LOGIC);
@@ -142,4 +143,6 @@ begin
             tone_pl => channels_ntrl(i),
             wave_o_pl => pl_array_ntrl(i));
     end generate player_gen;
+
+    LED <= PDATA_ntrl;
 end Behavioral;
