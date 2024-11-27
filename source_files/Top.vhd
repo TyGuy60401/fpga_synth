@@ -51,6 +51,7 @@ architecture Behavioral of Top is
                CHANNELS : out channels_array;
                WAIT_COUNTS : out wait_counts_array;
                VELOCITIES : out velocities_array;
+               DECAYS : out decays_array;
                PLAYER_ENS : out STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0));
     end component;
     
@@ -77,17 +78,35 @@ architecture Behavioral of Top is
            S_OUT : out STD_LOGIC);
     end component;
     
+    component Player is
+        Port ( NOTE_PL : in STD_LOGIC_VECTOR (15 downto 0);
+               CLK_PL : in STD_LOGIC;
+               RST_PL : in STD_LOGIC;
+               PLAY_PL : in STD_LOGIC;
+               TONE_PL : in STD_LOGIC_VECTOR (1 downto 0);
+               WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
+    end component;
+    
     signal SUM_ntrl : STD_LOGIC_VECTOR (11 downto 0);
     signal RDY_ntrl : STD_LOGIC;
     signal PDATA_ntrl : STD_LOGIC_VECTOR (7 downto 0);
+
+    signal PL_ACT_ntrl : STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0) := (others => '0');
+    signal PL_array_ntrl : player_array := (others => (others => '0'));
+
+    signal wait_counts_ntrl : wait_counts_array := (others => (others => '0'));
+    signal channels_ntrl : channels_array := (others => (others => '0'));
+    signal velocities_ntrl : velocities_array := (others => (others => '0'));
+    signal decays_ntrl : decays_array := (others => (others => '0'));
+    signal player_ens_ntrl : std_logic_vector (PLAYER_COUNT - 1 downto 0) := (others => '0');
 
 begin
 
     SUMMER_INST : Summer port map (
         SUM => SUM_ntrl,
         CLK => CLK,
-        PL_ACT => ,
-        PL_array => );
+        PL_ACT => PL_ACT_ntrl,
+        PL_array => PL_array_ntrl);
         
     TRANSMITTER_INST : Transmitter port map (
         SUM => SUM_ntrl,
@@ -108,9 +127,19 @@ begin
         RST => RST,
         RX_RDY => RDY_ntrl,
         RX_PDATA => PDATA_ntrl,
-        CHANNELS => ,
-        WAIT_COUNTS => ,
-        VELOCITIES => ,
-        PLAYER_ENS => );
-
+        CHANNELS => channels_ntrl,
+        WAIT_COUNTS => wait_counts_ntrl,
+        VELOCITIES => velocities_ntrl,
+        PLAYER_ENS => player_ens_ntrl,
+        DECAYS => decays_ntrl);
+        
+    player_gen: for i in 0 to PLAYER_COUNT - 1 generate
+        PL: component Player port map(
+            note_pl => wait_counts_ntrl(i),
+            clk_pl => CLK,
+            rst_pl => RST,
+            play_pl => player_ens_ntrl(i),
+            tone_pl => channels_ntrl(i),
+            wave_o_pl => pl_array_ntrl(i));
+    end generate player_gen;
 end Behavioral;

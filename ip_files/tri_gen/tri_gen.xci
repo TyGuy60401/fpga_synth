@@ -3,7 +3,7 @@
   "ip_inst": {
     "xci_name": "tri_gen",
     "component_reference": "xilinx.com:ip:blk_mem_gen:8.4",
-    "ip_revision": "5",
+    "ip_revision": "6",
     "gen_directory": "../../../../Synthesizer_Final_Project.gen/sources_1/ip/tri_gen",
     "parameters": {
       "component_parameters": {
