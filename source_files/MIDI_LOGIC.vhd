@@ -41,6 +41,7 @@ entity MIDI_LOGIC is
            CHANNELS : out channels_array;
            WAIT_COUNTS : out wait_counts_array;
            VELOCITIES : out velocities_array;
+           DECAYS : out decays_array;
            PLAYER_ENS : out STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0));
 end MIDI_LOGIC;
 
@@ -57,11 +58,13 @@ architecture Behavioral of MIDI_LOGIC is
     signal note : std_logic_vector (7 downto 0);
     signal velocity : std_logic_vector (6 downto 0);
     signal hash : std_logic_vector (9 downto 0);
+    signal control : std_logic_vector (6 downto 0);
 
     type hash_array is array (0 to 7) of std_logic_vector (9 downto 0);
     signal hash_arr : hash_array := (others => (others => '0'));
 
     type channel_decays_array is array (0 to 2) of std_logic_vector (6 downto 0);
+    signal channel_decays : channel_decays_array := (others => "1000000");
     
     signal idx : integer := 0;
 
@@ -73,6 +76,8 @@ begin
             CHANNELS <= (others => (others => '0'));
             PLAYER_ENS <= (others => '0');
             VELOCITIES <= (others => (others => '0'));
+            DECAYS <= (others => "1000000");
+            WAIT_COUNTS <= (others => (others => '0'));
         elsif rising_edge(CLK) then
             case cs is
                 when idle =>
@@ -104,8 +109,6 @@ begin
                         cs <= idle;
                     end if;
                 when ON_DB2_2 =>
-                    velocity <= RX_PDATA(6 downto 0);
-                    hash <= channel(1 downto 0) & note;
                     
                     -- finding the first item in the array that is empty
                     for i in PLAYER_COUNT - 1 downto 0 loop
@@ -114,11 +117,12 @@ begin
                         end if;
                     end loop;
 
-                    hash_arr(idx) <= hash;
-                    VELOCITIES(idx) <= velocity;
+                    hash_arr(idx) <= channel(1 downto 0) & note;
+                    VELOCITIES(idx) <= RX_PDATA(6 downto 0);
                     CHANNELS(idx) <= channel(1 downto 0);
                     PLAYER_ENS(idx) <= '1';
                     WAIT_COUNTS(idx) <= NOTE_COUNTS(to_integer(unsigned(note)));
+                    DECAYS(idx) <= channel_decays(to_integer(unsigned(channel)));
                     
                     cs <= idle;
                 when OFF_DB1 =>
@@ -131,16 +135,16 @@ begin
                         cs <= idle;
                     end if;
                 when OFF_DB2_2 =>
-                    hash <= channel(1 downto 0) & note;
                     
                     for i in PLAYER_COUNT - 1 downto 0 loop
-                        if (hash_arr(0) = hash) then
+                        if (hash_arr(0) = channel(1 downto 0) & note) then
                             idx <= i;
                         end if;
                     end loop;
                     
                     PLAYER_ENS(idx) <= '0';
                     hash_arr(idx) <= (others => '0');
+                    cs <= idle;
                 when DC1 =>
                     control <= RX_PDATA(6 downto 0);
                     cs <= W8;
@@ -151,7 +155,8 @@ begin
                         cs <= idle;
                     end if;
                 when DC2_2 =>
-
+                    channel_decays(to_integer(unsigned(channel))) <= RX_PDATA(6 downto 0);
+                    cs <= idle;
                 when W1 =>
                     if RX_RDY = '1' then
                         cs <= ON_DB1;

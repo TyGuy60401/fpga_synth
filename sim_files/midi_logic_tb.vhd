@@ -43,6 +43,7 @@ architecture Behavioral of midi_logic_tb is
                RX_PDATA : in STD_LOGIC_VECTOR (7 downto 0);
                CHANNELS : out channels_array;
                WAIT_COUNTS : out wait_counts_array;
+               DECAYS : out decays_array;
                VELOCITIES : out velocities_array;
                PLAYER_ENS : out STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0));
     end component;
@@ -67,6 +68,11 @@ begin
     
     process
     begin
+        wait for 10 ns;
+        t_rst <= '1';
+        wait for 10 ns;
+        t_rst <= '0';
+        
         wait for 100 ns;
         t_pdata <= x"90";
         wait for 10 ns;
@@ -83,6 +89,27 @@ begin
         
         wait for 40 ns;
         t_pdata <= x"a1";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"80";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"4D";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"00";
         wait for 10 ns;
         t_rdy <= '1';
         wait for 10 ns;
