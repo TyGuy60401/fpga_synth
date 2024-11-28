@@ -37,6 +37,7 @@ entity Top is
            SYNC : out STD_LOGIC;
            SCK : out STD_LOGIC;
            LED : out STD_LOGIC_VECTOR (7 downto 0);
+           LED2 : out STD_LOGIC_VECTOR (7 downto 0);
            CLK : in STD_LOGIC;
            RST : in STD_LOGIC;
            S_IN : in STD_LOGIC);
@@ -145,4 +146,5 @@ begin
     end generate player_gen;
 
     LED <= PDATA_ntrl;
+    LED2 <= player_ens_ntrl;
 end Behavioral;
