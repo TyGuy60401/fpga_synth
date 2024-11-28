@@ -40,7 +40,8 @@ entity Top is
            LED2 : out STD_LOGIC_VECTOR (7 downto 0);
            CLK : in STD_LOGIC;
            RST : in STD_LOGIC;
-           S_IN : in STD_LOGIC);
+           S_IN : in STD_LOGIC;
+           SER_OUT : out STD_LOGIC);
 end Top;
 
 architecture Behavioral of Top is
@@ -64,6 +65,15 @@ architecture Behavioral of Top is
            clk_rx : in STD_LOGIC;
            ready : out STD_LOGIC;
            pdata_rx : out STD_LOGIC_VECTOR (7 downto 0));
+    end component;
+    
+    component UART_TX is
+        Port ( CLK : in STD_LOGIC;
+               PDATA : in STD_LOGIC_VECTOR (7 downto 0);
+               LOAD : in STD_LOGIC;
+               BUSY : out STD_LOGIC;
+               DONE : out STD_LOGIC;
+               SDATA : out STD_LOGIC);
     end component;
     
     component Summer is
@@ -148,6 +158,12 @@ begin
             tone_pl => channels_ntrl(i),
             wave_o_pl => pl_array_ntrl(i));
     end generate player_gen;
+
+    uart_tx_inst: UART_TX port map (
+        CLK => CLK,
+        PDATA => PDATA_ntrl,
+        LOAD => RDY_ntrl,
+        SDATA => SER_OUT);
 
     LED <= state_ntrl;
     LED2 <= player_ens_ntrl;
