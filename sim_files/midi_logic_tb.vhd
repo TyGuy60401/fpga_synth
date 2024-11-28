@@ -88,7 +88,29 @@ begin
         t_rdy <= '0';
         
         wait for 40 ns;
-        t_pdata <= x"a1";
+        t_pdata <= x"71";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        -- play another note
+        wait for 100 ns;
+        t_pdata <= x"90";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"4E";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"63";
         wait for 10 ns;
         t_rdy <= '1';
         wait for 10 ns;
@@ -114,6 +136,71 @@ begin
         t_rdy <= '1';
         wait for 10 ns;
         t_rdy <= '0';
+        
+        
+        wait for 100 ns;
+        t_pdata <= x"91";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"4E";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"38";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 100 ns;
+        t_pdata <= x"B0";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"4A";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"10";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 100 ns;
+        t_pdata <= x"90";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"39";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
+        wait for 40 ns;
+        t_pdata <= x"41";
+        wait for 10 ns;
+        t_rdy <= '1';
+        wait for 10 ns;
+        t_rdy <= '0';
+        
         
         wait;
     end process;

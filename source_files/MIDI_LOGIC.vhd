@@ -53,12 +53,12 @@ architecture Behavioral of MIDI_LOGIC is
                     W1, W2, W3, W4, W5, W6, W7, W8);
 
     signal cs : Tstate := idle;
-    signal channel : std_logic_vector (3 downto 0);
+    signal channel : std_logic_vector (3 downto 0) := "0000";
     signal n : integer := 0;
-    signal note : std_logic_vector (7 downto 0);
-    signal velocity : std_logic_vector (6 downto 0);
-    signal hash : std_logic_vector (9 downto 0);
-    signal control : std_logic_vector (6 downto 0);
+    signal note : std_logic_vector (7 downto 0) := "00000000";
+    signal velocity : std_logic_vector (6 downto 0) := "1000000";
+    signal hash : std_logic_vector (9 downto 0) := "0000000000";
+    signal control : std_logic_vector (6 downto 0) := "0000000";
 
     type hash_array is array (0 to 7) of std_logic_vector (9 downto 0);
     signal hash_arr : hash_array := (others => (others => '0'));
@@ -78,6 +78,10 @@ begin
             VELOCITIES <= (others => (others => '0'));
             DECAYS <= (others => "1000000");
             WAIT_COUNTS <= (others => (others => '0'));
+            note <= "00000000";
+            velocity <= "1000000";
+            hash <= "0000000000";
+            control <= "0000000";
         elsif rising_edge(CLK) then
             case cs is
                 when idle =>
@@ -108,14 +112,16 @@ begin
                     else
                         cs <= idle;
                     end if;
-                when ON_DB2_2 =>
                     
                     -- finding the first item in the array that is empty
-                    for i in PLAYER_COUNT - 1 downto 0 loop
-                        if (hash_arr(0) = "0000000000") then
+                    for i in hash_arr'range loop
+                        if hash_arr(i) = "0000000000" then
                             idx <= i;
+                            exit;
                         end if;
                     end loop;
+                when ON_DB2_2 =>
+
 
                     hash_arr(idx) <= channel(1 downto 0) & note;
                     VELOCITIES(idx) <= RX_PDATA(6 downto 0);
@@ -134,13 +140,13 @@ begin
                     else
                         cs <= idle;
                     end if;
-                when OFF_DB2_2 =>
                     
                     for i in PLAYER_COUNT - 1 downto 0 loop
-                        if (hash_arr(0) = channel(1 downto 0) & note) then
+                        if (hash_arr(i) = channel(1 downto 0) & note) then
                             idx <= i;
                         end if;
                     end loop;
+                when OFF_DB2_2 =>
                     
                     PLAYER_ENS(idx) <= '0';
                     hash_arr(idx) <= (others => '0');
