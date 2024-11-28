@@ -1,9 +1,11 @@
 import serial
 
+COM_PORT = 'COM4'
+
 def main():
     # Configure the serial connection
     ser = serial.Serial(
-        port='COM5',
+        port=COM_PORT,
         baudrate=31250,
         bytesize=serial.EIGHTBITS,
         parity=serial.PARITY_NONE,
@@ -12,7 +14,7 @@ def main():
     )
 
     try:
-        print("Monitoring COM5 at 31.25 kBaud. Press Ctrl+C to stop.")
+        print(f"Monitoring {COM_PORT} at 31.25 kBaud. Press Ctrl+C to stop.")
         while True:
             # Read data from the serial port
             data = ser.read(3)  # Read up to 16 bytes at a time (adjust as needed)
