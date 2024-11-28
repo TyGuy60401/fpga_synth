@@ -127,7 +127,7 @@ begin
                     
                         counter <= counter + 1;                     
                         if counter = 3199 then
-                            pdata_rx(7 - bit_counter) <= sdata_rx;
+                            pdata_rx(bit_counter) <= sdata_rx;
                         end if;
     
                     else
