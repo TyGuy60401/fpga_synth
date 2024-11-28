@@ -54,6 +54,7 @@ architecture Behavioral of Top is
                WAIT_COUNTS : out wait_counts_array;
                VELOCITIES : out velocities_array;
                DECAYS : out decays_array;
+               state : out std_logic_vector (7 downto 0);
                PLAYER_ENS : out STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0));
     end component;
     
@@ -88,6 +89,8 @@ architecture Behavioral of Top is
                TONE_PL : in STD_LOGIC_VECTOR (1 downto 0);
                WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
     end component;
+    
+    signal state_ntrl : STD_LOGIC_VECTOR (7 downto 0);
     
     signal SUM_ntrl : STD_LOGIC_VECTOR (11 downto 0);
     signal RDY_ntrl : STD_LOGIC;
@@ -133,7 +136,8 @@ begin
         WAIT_COUNTS => wait_counts_ntrl,
         VELOCITIES => velocities_ntrl,
         PLAYER_ENS => player_ens_ntrl,
-        DECAYS => decays_ntrl);
+        DECAYS => decays_ntrl,
+        STATE => state_ntrl);
         
     player_gen: for i in 0 to PLAYER_COUNT - 1 generate
         PL: component Player port map(
@@ -145,6 +149,6 @@ begin
             wave_o_pl => pl_array_ntrl(i));
     end generate player_gen;
 
-    LED <= PDATA_ntrl;
+    LED <= state_ntrl;
     LED2 <= player_ens_ntrl;
 end Behavioral;

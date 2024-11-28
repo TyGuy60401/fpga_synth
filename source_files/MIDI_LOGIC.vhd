@@ -42,6 +42,7 @@ entity MIDI_LOGIC is
            WAIT_COUNTS : out wait_counts_array;
            VELOCITIES : out velocities_array;
            DECAYS : out decays_array;
+           state : out std_logic_vector (7 downto 0);
            PLAYER_ENS : out STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0));
 end MIDI_LOGIC;
 
@@ -85,10 +86,12 @@ begin
         elsif rising_edge(CLK) then
             case cs is
                 when idle =>
+                    state <= x"01";
                     if RX_RDY = '1' then
                         cs <= status_byte;
                     end if;
                 when status_byte =>
+                    state <= x"02";
                     channel <= RX_PDATA(3 downto 0);
                     n <= 0;
                     case RX_PDATA(7 downto 4) is
@@ -104,9 +107,11 @@ begin
                     end case;
                     
                 when ON_DB1 =>
+                    state <= x"03";
                     note <= RX_PDATA;
                     cs <= W2;
                 when ON_DB2_1 =>
+                    state <= x"04";
                     if channel = "0000" or channel = "0001" or channel = "0010" then
                         cs <= ON_DB2_2;
                     else
@@ -121,6 +126,7 @@ begin
                         end if;
                     end loop;
                 when ON_DB2_2 =>
+                    state <= x"05";
 
 
                     hash_arr(idx) <= channel(1 downto 0) & note;
@@ -132,9 +138,11 @@ begin
                     
                     cs <= idle;
                 when OFF_DB1 =>
+                    state <= x"06";
                     note <= RX_PDATA;
                     cs <= OFF_DB2_1;
                 when OFF_DB2_1 =>
+                    state <= x"07";
                     if channel = "0000" or channel = "0001" or channel = "0010" then
                         cs <= OFF_DB2_2;
                     else
@@ -147,51 +155,63 @@ begin
                         end if;
                     end loop;
                 when OFF_DB2_2 =>
+                    state <= x"07";
                     
                     PLAYER_ENS(idx) <= '0';
                     hash_arr(idx) <= (others => '0');
                     cs <= idle;
                 when DC1 =>
+                    state <= x"08";
                     control <= RX_PDATA(6 downto 0);
                     cs <= W8;
                 when DC2_1 =>
+                    state <= x"09";
                     if control = x"DA" then
                         cs <= DC2_2;
                     else
                         cs <= idle;
                     end if;
                 when DC2_2 =>
+                    state <= x"0A";
                     channel_decays(to_integer(unsigned(channel))) <= RX_PDATA(6 downto 0);
                     cs <= idle;
                 when W1 =>
+                    state <= x"0B";
                     if RX_RDY = '1' then
                         cs <= ON_DB1;
                     end if;
                 when W2 =>
+                    state <= x"0C";
                     if RX_RDY = '1' then
                         cs <= ON_DB2_1;
                     end if;
                 when W3 =>
+                    state <= x"0D";
                     if RX_RDY = '1' then
                         cs <= OFF_DB1;
                     end if;
                 when W4 =>
+                    state <= x"0E";
                     if RX_RDY = '1' then
                         cs <= OFF_DB2_1;
                     end if;
                 when W5 =>
+                    state <= x"0F";
                     if RX_RDY = '1' then
                         cs <= W6;
                     end if;
                 when W6 =>
+                    state <= x"10";
                     if RX_RDY = '1' then
                         cs <= idle;
                     end if;
                 when W7 =>
+                    state <= x"11";
                     if RX_RDY = '1' then
                         cs <= DC1;
                     end if;
                 when W8 =>
+                    state <= x"12";
                     if RX_RDY = '1' then
                         cs <= DC2_2;
                     end if;
