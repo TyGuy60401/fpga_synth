@@ -9,73 +9,60 @@ architecture Behavioral of Transmitter_tb is
 
     -- Component Declaration for the Transmitter
     component Transmitter is
-        Port (
-            SUM : in STD_LOGIC_VECTOR (11 downto 0);
-            CLK : in STD_LOGIC;
-            SCK : out STD_LOGIC;
-            BUSY : out STD_LOGIC;
-            S_OUT : out STD_LOGIC
-        );
-    end component;
+        Port ( SUM_TX : in STD_LOGIC_VECTOR (11 downto 0);
+               RST_TX: in STD_LOGIC;
+               CLK_TX : in STD_LOGIC;
+               LOAD_TX : in STD_LOGIC;
+               BUSY_TX : out STD_LOGIC;
+               SCLK_TX : out STD_LOGIC;
+               DOUT_TX : out STD_LOGIC;
+               SYNC_TX : out STD_LOGIC);
+    end component Transmitter;
 
     -- Testbench Signals
-    signal SUM_tb : STD_LOGIC_VECTOR(11 downto 0) := (others => '0');
-    signal CLK_tb : STD_LOGIC := '0';
-    signal SCK_tb : STD_LOGIC;
-    signal BUSY_tb : STD_LOGIC;
-    signal S_OUT_tb : STD_LOGIC;
+    signal SUM_DA2_TB : STD_LOGIC_VECTOR (11 downto 0);
+    signal RST_DA2_TB: STD_LOGIC;
+    signal CLK_DA2_TB : STD_LOGIC := '0';
+    signal SCLK_DA2_TB : STD_LOGIC;
+    signal DINA_DA2_TB : STD_LOGIC;
+    signal SYNC_DA2_TB : STD_LOGIC;
+    signal LOAD_DA2_TB : STD_LOGIC;
+    signal BUSY_DA2_TB : STD_LOGIC;
 
-    -- Clock Period Constants
-    constant CLK_PERIOD : time := 10 ns;  -- 100 MHz clock
 
 begin
 
     -- Instantiate the Unit Under Test (UUT)
     UUT: Transmitter
         Port map (
-            SUM => SUM_tb,
-            CLK => CLK_tb,
-            SCK => SCK_tb,
-            BUSY => BUSY_tb,
-            S_OUT => S_OUT_tb
+            SUM_TX => SUM_DA2_TB,
+            RST_TX => RST_DA2_TB,
+            CLK_TX => CLK_DA2_TB,
+            LOAD_TX => LOAD_DA2_TB,
+            BUSY_TX => BUSY_DA2_TB,
+            SCLK_TX => SCLK_DA2_TB,
+            DOUT_TX => DINA_DA2_TB,
+            SYNC_TX => SYNC_DA2_TB
         );
 
-    -- Clock Generation Process
-    clk_process : process
-    begin
-        while True loop
-            CLK_tb <= '0';
-            wait for CLK_PERIOD / 2;  -- Low phase of the clock
-            CLK_tb <= '1';
-            wait for CLK_PERIOD / 2;  -- High phase of the clock
-        end loop;
-    end process;
+CLK_DA2_TB <= NOT(CLK_DA2_TB) after 2 ns;
 
-    -- Stimulus Process
-    stim_process : process
-    begin
-        -- Wait for initial stabilization
+
+process begin
+    --RESET
+    RST_DA2_TB <= '1';
+        wait for 10 ns;
+    RST_DA2_TB <= '0';
+    LOAD_DA2_TB <= SCLK_DA2_TB;
         wait for 100 ns;
-
-        -- Test Case 1: Transmit a basic value
-        SUM_tb <= "101010101010";  -- Example 12-bit value
-        wait for 1000 ns;
-
-        -- Test Case 2: Transmit all zeros
-        SUM_tb <= (others => '0');
-        wait for 1000 ns;
-
-        -- Test Case 3: Transmit all ones
-        SUM_tb <= (others => '1');
-        wait for 1000 ns;
-
-        -- Test Case 4: Transmit a specific pattern
-        SUM_tb <= "111100001111";
-        wait for 1000 ns;
-
-        -- End simulation
-        wait;
-    end process;
+    SUM_DA2_TB <= x"f3a";
+    LOAD_DA2_TB <= '0';
+        wait for 203000 ns;
+    SUM_DA2_TB <= x"aab";
+        wait for 203000 ns;
+        LOAD_DA2_TB <= '1';
+        wait for 406000 ns;
+end process;
 
 end Behavioral;
 

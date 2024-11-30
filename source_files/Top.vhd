@@ -35,7 +35,7 @@ use work.extra_signals.all;
 entity Top is
     Port ( S_OUT : out STD_LOGIC;
            SYNC : out STD_LOGIC;
-           SCK : out STD_LOGIC;
+           SCLK : out STD_LOGIC;
            LED : out STD_LOGIC_VECTOR (7 downto 0);
            LED2 : out STD_LOGIC_VECTOR (7 downto 0);
            CLK : in STD_LOGIC;
@@ -84,12 +84,14 @@ architecture Behavioral of Top is
     end component;
     
     component Transmitter is
-    Port ( SUM : in STD_LOGIC_VECTOR (11 downto 0);
-           CLK : in STD_LOGIC;
-           SCK : out STD_LOGIC;
-           BUSY : out STD_LOGIC;
-           S_OUT : out STD_LOGIC);
-    end component;
+        Port ( SUM_TX : in STD_LOGIC_VECTOR (11 downto 0);
+               RST_TX: in STD_LOGIC;
+               CLK_TX : in STD_LOGIC;
+               LOAD_TX : in STD_LOGIC;
+               SCLK_TX : out STD_LOGIC;
+               DOUT_TX : out STD_LOGIC;
+               SYNC_TX : out STD_LOGIC);
+    end component Transmitter;
     
     component Player is
         Port ( NOTE_PL : in STD_LOGIC_VECTOR (15 downto 0);
@@ -100,6 +102,27 @@ architecture Behavioral of Top is
                WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
     end component;
     
+    component Velocity is
+    Port ( WAVE_IN_V : in STD_LOGIC_VECTOR (11 downto 0);
+           VELOCITY_V : in STD_LOGIC_VECTOR (6 downto 0);
+           PLY_ACT_V: in STD_LOGIC;
+           CLK_V : in STD_LOGIC;
+           WAVE_OUT_V : out STD_LOGIC_VECTOR (11 downto 0)
+           );        
+    end component Velocity;
+    
+    component Decay is
+    Port ( PLAY_D : in STD_LOGIC;
+           CLK_D : in STD_LOGIC;
+           RST_D : in STD_LOGIC;
+           DECAY_CONTROL: in STD_LOGIC_VECTOR (6 downto 0);
+           WAVE_IN_D : in STD_LOGIC_VECTOR (11 downto 0);
+           PLY_ACT_D : out STD_LOGIC;
+           WAVE_OUT_D : out STD_LOGIC_VECTOR (11 downto 0);
+           DEC_TEST_OUT: out STD_LOGIC_VECTOR (6 downto 0));
+    end component Decay;
+
+    
     signal state_ntrl : STD_LOGIC_VECTOR (7 downto 0);
     
     signal SUM_ntrl : STD_LOGIC_VECTOR (11 downto 0);
@@ -108,13 +131,19 @@ architecture Behavioral of Top is
 
     signal PL_ACT_ntrl : STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0) := (others => '0');
     signal PL_array_ntrl : player_array := (others => (others => '0'));
+    signal VEL_array_ntrl : player_array := (others => (others => '0'));
+    signal DEC_array_ntrl : player_array := (others => (others => '0'));
 
     signal wait_counts_ntrl : wait_counts_array := (others => (others => '0'));
     signal channels_ntrl : channels_array := (others => (others => '0'));
     signal velocities_ntrl : velocities_array := (others => (others => '0'));
     signal decays_ntrl : decays_array := (others => (others => '0'));
     signal player_ens_ntrl : std_logic_vector (PLAYER_COUNT - 1 downto 0) := (others => '0');
-
+    
+    signal decays_test : decays_array := (others => (others => '0'));
+    
+    constant max_decay : decays_array := (others => (others => '1'));
+    
 begin
 
     SUMMER_INST : Summer port map (
@@ -124,11 +153,13 @@ begin
         PL_array => PL_array_ntrl);
         
     TRANSMITTER_INST : Transmitter port map (
-        SUM => SUM_ntrl,
-        CLK => CLK,
-        SCK => SCK,
-        BUSY => SYNC,
-        S_OUT => S_OUT);
+        SUM_TX => SUM_ntrl,
+        RST_TX => RST,
+        CLK_TX => CLK,
+        LOAD_TX => '1',
+        SCLK_TX => SCLK,
+        DOUT_TX => S_OUT,
+        SYNC_TX => SYNC);
         
     MIDI_RX_INST : UART_RX port map (
         clk_rx => CLK,
@@ -158,6 +189,27 @@ begin
             tone_pl => channels_ntrl(i),
             wave_o_pl => pl_array_ntrl(i));
     end generate player_gen;
+    
+    velocity_gen: for i in 0 to PLAYER_COUNT - 1 generate
+        VEL: component velocity port map(
+           WAVE_IN_V => pl_array_ntrl(i),
+           VELOCITY_V => velocities_ntrl(i),
+           PLY_ACT_V => player_ens_ntrl(i),
+           CLK_V => CLK,
+           WAVE_OUT_V => VEL_array_ntrl(i));
+    end generate velocity_gen;
+    
+    decay_gen: for i in 0 to PLAYER_COUNT - 1 generate
+        DEC: component decay port map(
+           PLAY_D => player_ens_ntrl(i),
+           CLK_D => CLK,
+           RST_D => RST,
+           DECAY_CONTROL => max_decay(i),
+           WAVE_IN_D => VEL_array_ntrl(i),
+           PLY_ACT_D => PL_ACT_ntrl(i),
+           WAVE_OUT_D => DEC_array_ntrl(i),
+           DEC_TEST_OUT => decays_test(i));
+    end generate decay_gen;
 
     uart_tx_inst: UART_TX port map (
         CLK => CLK,
@@ -165,6 +217,6 @@ begin
         LOAD => RDY_ntrl,
         SDATA => SER_OUT);
 
-    LED <= state_ntrl;
+    LED <= PL_ACT_ntrl;
     LED2 <= player_ens_ntrl;
 end Behavioral;

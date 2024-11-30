@@ -37,6 +37,7 @@ entity Player is
            RST_PL : in STD_LOGIC;
            PLAY_PL : in STD_LOGIC;
            TONE_PL : in STD_LOGIC_VECTOR (1 downto 0);
+           LOAD_PL : out STD_LOGIC;
            WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
 end Player;
 
