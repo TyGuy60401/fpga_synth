@@ -84,14 +84,12 @@ architecture Behavioral of Top is
     end component;
     
     component Transmitter is
-        Port ( SUM_TX : in STD_LOGIC_VECTOR (11 downto 0);
-               RST_TX: in STD_LOGIC;
-               CLK_TX : in STD_LOGIC;
-               LOAD_TX : in STD_LOGIC;
-               SCLK_TX : out STD_LOGIC;
-               DOUT_TX : out STD_LOGIC;
-               SYNC_TX : out STD_LOGIC);
-    end component Transmitter;
+        Port ( SUM : in STD_LOGIC_VECTOR (11 downto 0);
+               CLK : in STD_LOGIC;
+               SCK : out STD_LOGIC;
+               BUSY : out STD_LOGIC;
+               S_OUT : out STD_LOGIC);
+    end component;
     
     component Player is
         Port ( NOTE_PL : in STD_LOGIC_VECTOR (15 downto 0);
@@ -152,14 +150,15 @@ begin
         PL_ACT => PL_ACT_ntrl,
         PL_array => PL_array_ntrl);
         
+
+        
     TRANSMITTER_INST : Transmitter port map (
-        SUM_TX => SUM_ntrl,
-        RST_TX => RST,
-        CLK_TX => CLK,
-        LOAD_TX => '1',
-        SCLK_TX => SCLK,
-        DOUT_TX => S_OUT,
-        SYNC_TX => SYNC);
+        SUM => SUM_ntrl,
+        CLK => CLK,
+        SCK => SCLK,
+        BUSY => SYNC,
+        S_OUT => S_OUT
+    );
         
     MIDI_RX_INST : UART_RX port map (
         clk_rx => CLK,
