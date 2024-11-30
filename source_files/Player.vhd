@@ -32,7 +32,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity Player is
-    Port ( NOTE_PL : in STD_LOGIC_VECTOR (15 downto 0);
+    Port ( NOTE_PL : in STD_LOGIC_VECTOR (23 downto 0);
            CLK_PL : in STD_LOGIC;
            RST_PL : in STD_LOGIC;
            PLAY_PL : in STD_LOGIC;
@@ -44,7 +44,7 @@ end Player;
 architecture Behavioral of Player is
 
 component Freq_gen is
-    Port ( NOTE_FG : in STD_LOGIC_VECTOR (15 downto 0);
+    Port ( NOTE_FG : in STD_LOGIC_VECTOR (23 downto 0);
            CLK_FG : in STD_LOGIC;
            RST_FG : in STD_LOGIC;
            NOTE_INDEX_FG : out STD_LOGIC_VECTOR (5 downto 0));

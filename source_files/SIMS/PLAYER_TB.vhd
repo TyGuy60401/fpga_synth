@@ -37,7 +37,7 @@ end PLAYER_TB;
 
 architecture Behavioral of PLAYER_TB is
 component Player is
-    Port ( NOTE_PL : in STD_LOGIC_VECTOR (15 downto 0);
+    Port ( NOTE_PL : in STD_LOGIC_VECTOR (23 downto 0);
            CLK_PL : in STD_LOGIC;
            RST_PL : in STD_LOGIC;
            PLAY_PL : in STD_LOGIC;
@@ -45,7 +45,7 @@ component Player is
            WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
 end component Player;
 
-   signal NOTE_PL_TB : STD_LOGIC_VECTOR (15 downto 0);
+   signal NOTE_PL_TB : STD_LOGIC_VECTOR (23 downto 0);
    signal CLK_PL_TB : STD_LOGIC := '0';
    signal RST_PL_TB : STD_LOGIC;
    signal PLAY_PL_TB : STD_LOGIC;
@@ -69,13 +69,13 @@ process begin
 RST_PL_TB <= '1';
 wait for 10 ns;
 RST_PL_TB <= '0';
-NOTE_PL_TB <= x"0080";
+NOTE_PL_TB <= x"800000";
 TONE_PL_TB <= "00";
 wait for 10 ns;
 TONE_PL_TB <= "01";
-wait for 10000 ns;
-NOTE_PL_TB <= x"0400";
-wait for 10000 ns;
+wait for 1 ms;
+NOTE_PL_TB <= x"000800";
+wait for 1 ms;
 
 
 end process;

@@ -32,7 +32,7 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity Freq_gen is
-    Port ( NOTE_FG : in STD_LOGIC_VECTOR (15 downto 0);
+    Port ( NOTE_FG : in STD_LOGIC_VECTOR (23 downto 0);
            CLK_FG : in STD_LOGIC;
            RST_FG : in STD_LOGIC;
            NOTE_INDEX_FG : out STD_LOGIC_VECTOR (5 downto 0));
@@ -40,7 +40,7 @@ end Freq_gen;
 
 architecture Behavioral of Freq_gen is
 
-signal cnt : unsigned (15 downto 0);
+signal cnt : unsigned (23 downto 0);
 signal s_NOTE_INDEX_FG: unsigned (5 downto 0);
 
 
@@ -57,7 +57,7 @@ process(CLK_FG, RST_FG) begin
     
         if cnt < unsigned(NOTE_FG) then
             cnt <= cnt + 1;
-        elsif s_NOTE_INDEX_FG >= x"3f" then
+        elsif s_NOTE_INDEX_FG >= x"3e" then
             s_NOTE_INDEX_FG <= (others => '0');
             cnt <= (others => '0');
         else

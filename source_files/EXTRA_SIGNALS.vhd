@@ -35,12 +35,12 @@ package EXTRA_SIGNALS is
     constant PLAYER_COUNT : integer := 8;
     
     type velocities_array is array (PLAYER_COUNT - 1 downto 0) of STD_LOGIC_VECTOR (6 downto 0);
-    type wait_counts_array is array (PLAYER_COUNT - 1 downto 0) of STD_LOGIC_VECTOR (15 downto 0);
+    type wait_counts_array is array (PLAYER_COUNT - 1 downto 0) of STD_LOGIC_VECTOR (23 downto 0);
     type channels_array is array (PLAYER_COUNT - 1 downto 0) of STD_LOGIC_VECTOR (1 downto 0);
     type decays_array is array(PLAYER_COUNT - 1 downto 0) of STD_LOGIC_VECTOR (6 downto 0);
     type player_array is array(7 downto 0) of std_logic_vector (11 downto 0);
     
-    type note_count_array is array (21 to 127) of std_logic_vector (15 downto 0);
+    type note_count_array is array (21 to 127) of std_logic_vector (23 downto 0);
 
     constant NOTE_COUNTS : note_count_array := (
 --     C        C#         D        D#         E         F        F#         G        G#         A        A#         B
