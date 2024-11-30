@@ -1,15 +1,14 @@
 import serial
+from load_config import *
 
-COM_PORT = 'COM4'
+config = load_config.load_config()
+
+COM_PORT = config['COM_PORT']
 
 def main():
     # Configure the serial connection
     ser = serial.Serial(
-<<<<<<< HEAD:scripts/test_serial.py
-        port='COM6',
-=======
         port=COM_PORT,
->>>>>>> 8aacaf4afb6dd5c2531a4686f8b1d6c99865caaa:scripts/monitor_serial.py
         baudrate=31250,
         bytesize=serial.EIGHTBITS,
         parity=serial.PARITY_NONE,
@@ -18,11 +17,7 @@ def main():
     )
 
     try:
-<<<<<<< HEAD:scripts/test_serial.py
-        print("Monitoring COM6 at 31.25 kBaud. Press Ctrl+C to stop.")
-=======
         print(f"Monitoring {COM_PORT} at 31.25 kBaud. Press Ctrl+C to stop.")
->>>>>>> 8aacaf4afb6dd5c2531a4686f8b1d6c99865caaa:scripts/monitor_serial.py
         while True:
             # Read data from the serial port
             data = ser.read(3)  # Read up to 16 bytes at a time (adjust as needed)

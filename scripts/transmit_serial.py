@@ -1,7 +1,10 @@
 import serial
 import sys
+from load_config import *
 
-COM_PORT = 'COM4'
+config = load_config()
+
+COM_PORT = config['COM_PORT']
 
 def main(argv):
     ser = serial.Serial(
@@ -22,8 +25,6 @@ def main(argv):
         data_byte_1 = eval(f'0x{sys.argv[2]}')
     if sys.argv[3:]:
         data_byte_2 = eval(f'0x{sys.argv[3]}')
-
-
 
 
     message = bytes([status_byte, 0x40, 0x25])
