@@ -94,7 +94,7 @@ architecture Behavioral of Top is
     end component;
     
     component Player is
-        Port ( NOTE_PL : in STD_LOGIC_VECTOR (15 downto 0);
+        Port ( NOTE_PL : in STD_LOGIC_VECTOR (23 downto 0);
                CLK_PL : in STD_LOGIC;
                RST_PL : in STD_LOGIC;
                PLAY_PL : in STD_LOGIC;
