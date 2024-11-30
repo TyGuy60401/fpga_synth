@@ -75,7 +75,7 @@ begin
             
             -- Wait to recieve 8 bits
             when READ =>
-                if bit_counter = 8 then
+                if bit_counter = 9 then
                     next_state <= OUTPUT;
                 else
                     next_state <= READ;
@@ -126,7 +126,7 @@ begin
                     if counter /= 3200 then
                     
                         counter <= counter + 1;                     
-                        if counter = 3199 then
+                        if counter = 3199 and bit_counter < 8 then
                             pdata_rx(bit_counter) <= sdata_rx;
                         end if;
     

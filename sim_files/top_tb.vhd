@@ -52,7 +52,7 @@ architecture Behavioral of top_tb is
     signal t_rst : std_logic := '0';
     signal t_s_in : std_logic := '1';
     
-    signal DB1 : std_logic_vector(7 downto 0) := x"90";
+    signal DB1 : std_logic_vector(7 downto 0) := x"AA";
     signal DB2 : std_logic_vector(7 downto 0) := x"40";
     signal DB3 : std_logic_vector(7 downto 0) := x"40";
 

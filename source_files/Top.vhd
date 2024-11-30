@@ -41,6 +41,8 @@ entity Top is
            CLK : in STD_LOGIC;
            RST : in STD_LOGIC;
            S_IN : in STD_LOGIC;
+           MIDI_IN : in STD_LOGIC;
+           MIDI_SW : in STD_LOGIC;
            SER_OUT : out STD_LOGIC);
 end Top;
 
@@ -120,6 +122,7 @@ architecture Behavioral of Top is
            DEC_TEST_OUT: out STD_LOGIC_VECTOR (6 downto 0));
     end component Decay;
 
+    signal serial_ntrl : STD_LOGIC := '0';
     
     signal state_ntrl : STD_LOGIC_VECTOR (7 downto 0);
     
@@ -143,6 +146,15 @@ architecture Behavioral of Top is
     constant max_decay : decays_array := (others => (others => '1'));
     
 begin
+    process (CLK)
+    begin
+        case MIDI_SW is
+            when '1' =>
+                serial_ntrl <= S_IN;
+            when others =>
+                serial_ntrl <= MIDI_IN;
+        end case;
+    end process;
 
     SUMMER_INST : Summer port map (
         SUM => SUM_ntrl,
