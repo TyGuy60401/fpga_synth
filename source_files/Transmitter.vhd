@@ -48,18 +48,18 @@ begin
         end if;
     end process;
     
-    process(SCLK)
+    process(SCLK, CLK)
     begin
-        if rising_edge(SCLK) then 
+        if falling_edge(SCLK) then 
             case state is
                 when IDLE =>
                     SUM1 <= SUM;
-                    BUSY <= '0';
+                    BUSY <= '1';
                     S_OUT <= '0';
                     sclk_count <= 0;
                     state <= START;
                 when START =>
-                    BUSY <= '1';
+                    BUSY <= '0';
                     if sclk_count < 4 then
                         S_OUT <= '0';
                         sclk_count <= sclk_count + 1;
@@ -73,7 +73,7 @@ begin
                         S_OUT <= SUM1(sclk_count + 7);
                         sclk_count <= sclk_count - 1;
                     else
-                        BUSY <= '0';
+                        BUSY <= '1';
                         sclk_count <= 0;
                         SUM1 <= SUM;
                         S_OUT <= '0';
