@@ -1,7 +1,7 @@
 import serial
 from load_config import *
 
-config = load_config.load_config()
+config = load_config()
 
 COM_PORT = config['COM_PORT']
 
