@@ -160,7 +160,7 @@ begin
         SUM => SUM_ntrl,
         CLK => CLK,
         PL_ACT => PL_ACT_ntrl,
-        PL_array => PL_array_ntrl);
+        PL_array => DEC_array_ntrl);
         
 
         
@@ -175,7 +175,7 @@ begin
     MIDI_RX_INST : UART_RX port map (
         clk_rx => CLK,
         rst_rx => RST,
-        sdata_rx => S_IN,
+        sdata_rx => serial_ntrl,
         ready => RDY_ntrl,
         pdata_rx => PDATA_ntrl);
         
@@ -216,7 +216,7 @@ begin
            CLK_D => CLK,
            RST_D => RST,
            DECAY_CONTROL => max_decay(i),
-           WAVE_IN_D => VEL_array_ntrl(i),
+           WAVE_IN_D => pl_array_ntrl(i),
            PLY_ACT_D => PL_ACT_ntrl(i),
            WAVE_OUT_D => DEC_array_ntrl(i),
            DEC_TEST_OUT => decays_test(i));
