@@ -19,15 +19,15 @@ def main(argv):
     status_byte = eval('0x90')
     data_byte_1 = eval('0x41')
     data_byte_2 = eval('0x27')
-    if sys.argv[1:]:
-        status_byte = eval(f'0x{sys.argv[1]}')
-    if sys.argv[2:]:
-        data_byte_1 = eval(f'0x{sys.argv[2]}')
-    if sys.argv[3:]:
-        data_byte_2 = eval(f'0x{sys.argv[3]}')
+    if argv[1:]:
+        status_byte = eval(f'0x{argv[1]}')
+    if argv[2:]:
+        data_byte_1 = eval(f'0x{argv[2]}')
+    if argv[3:]:
+        data_byte_2 = eval(f'0x{argv[3]}')
 
 
-    message = bytes([status_byte, 0x40, 0x25])
+    message = bytes([status_byte, data_byte_1, data_byte_2])
     print(len(message))
 
     ser.write(message)

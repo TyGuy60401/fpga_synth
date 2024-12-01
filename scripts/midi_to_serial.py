@@ -15,8 +15,9 @@ ser = serial.Serial(
 )
 
 def callback(message, data):
-    print(hex(message[0][0]), message[0][1], message[0][2])
-    ser_message = bytes(message[0][0], message[0][1], message[0][2])
+    # print(hex(message[0][0]), message[0][1], message[0][2])
+    ser_message = bytes([message[0][0], message[0][1], message[0][2]])
+    # print(len(ser_message))
     ser.write(ser_message)
 
 midiin = rtmidi.MidiIn()
