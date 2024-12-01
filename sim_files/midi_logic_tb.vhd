@@ -167,7 +167,7 @@ begin
         t_rdy <= '0';
         
         wait for 40 ns;
-        t_pdata <= x"4A";
+        t_pdata <= x"21";
         wait for 10 ns;
         t_rdy <= '1';
         wait for 10 ns;

@@ -45,66 +45,78 @@ architecture Behavioral of top_tb is
                CLK : in STD_LOGIC;
                RST : in STD_LOGIC;
                S_IN : in STD_LOGIC;
+               MIDI_IN : in STD_LOGIC;
+               MIDI_SW : in STD_LOGIC;
                SER_OUT : out STD_LOGIC);
     end component;
 
+    signal t_midi_in : std_logic := '0';
+    signal t_midi_sw : std_logic := '1';
     signal t_clk : std_logic := '0';
     signal t_rst : std_logic := '0';
     signal t_s_in : std_logic := '1';
     
-    signal DB1 : std_logic_vector(7 downto 0) := x"AA";
-    signal DB2 : std_logic_vector(7 downto 0) := x"40";
-    signal DB3 : std_logic_vector(7 downto 0) := x"40";
+    type byte_array is array (0 to 100) of std_logic_vector(7 downto 0);
+    signal DB1_array : byte_array := (x"90", x"B0", x"90", others => (others => '1'));
+    signal DB2_array : byte_array := (x"40", x"21", x"44", others => (others => '1'));
+    signal DB3_array : byte_array := (x"39", x"10", x"30", others => (others => '1'));
 
 begin
     uut: top port map(
         clk => t_clk,
         rst => t_rst,
-        s_in => t_s_in);
+        s_in => t_s_in,
+        midi_in => t_midi_in,
+        midi_sw => t_midi_sw);
 
     process 
     begin
         wait for 5 ns;
         t_clk <= not t_clk;
     end process;
-
-    process 
+    
+    process
     begin
         wait for 10 ns;
         t_rst <= '1';
         wait for 10 ns;
         t_rst <= '0';
+        wait;
+    end process;
 
-        wait for 50 ns;
-        t_s_in <= '0';
-        wait for 32 us;
-        for i in 0 to 7 loop
-            t_s_in <= DB1(i);
+    process 
+    begin
+        for j in 0 to 100 loop
+            wait for 70 ns;
+            t_s_in <= '0';
+            wait for 32 us;
+            for i in 0 to 7 loop
+                t_s_in <= DB1_array(j)(i);
+                wait for 32 us;
+            end loop;
+            t_s_in <= '1';
+            wait for 32 us;
+            
+            wait for 50 ns;
+            t_s_in <= '0';
+            wait for 32 us;
+            for i in 0 to 7 loop
+                t_s_in <= DB2_array(j)(i);
+                wait for 32 us;
+            end loop;
+            t_s_in <= '1';
+            wait for 32 us;
+            
+            wait for 50 ns;
+            t_s_in <= '0';
+            wait for 32 us;
+            for i in 0 to 7 loop
+                t_s_in <= DB3_array(j)(i);
+                wait for 32 us;
+            end loop;
+            t_s_in <= '1';
             wait for 32 us;
         end loop;
-        t_s_in <= '1';
-        wait for 32 us;
-        
-        wait for 50 ns;
-        t_s_in <= '0';
-        wait for 32 us;
-        for i in 0 to 7 loop
-            t_s_in <= DB2(i);
-            wait for 32 us;
-        end loop;
-        t_s_in <= '1';
-        wait for 32 us;
-        
-        wait for 50 ns;
-        t_s_in <= '0';
-        wait for 32 us;
-        for i in 0 to 7 loop
-            t_s_in <= DB3(i);
-            wait for 32 us;
-        end loop;
-        t_s_in <= '1';
-        wait for 32 us;
-        
         
         
         
