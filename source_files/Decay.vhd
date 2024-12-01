@@ -129,13 +129,13 @@ end process;
 process (CLK_D, RST_D, curr_state) begin
     if RST_D = '1' then
         cnt <= 0;
-        DECAY_AM <= "1111111"; --unsigned(DECAY_CONTROL);
+        DECAY_AM <= unsigned(DECAY_CONTROL);
     elsif rising_edge(clk_D) then
         if curr_state = WAITING then
             cnt <= 0;
         elsif curr_state = PLAYING then
             cnt <= 0;
-            DECAY_AM <=  "1111111"; --unsigned(DECAY_CONTROL);
+            DECAY_AM <=  unsigned(DECAY_CONTROL);
         elsif cnt <= 1562500 and curr_state = DECAY then
             cnt <= cnt + 1;
         else
@@ -143,7 +143,7 @@ process (CLK_D, RST_D, curr_state) begin
             if DECAY_AM > 0 then
                 DECAY_AM <= DECAY_AM - 1;
             else
-                DECAY_AM <=  "1111111"; --unsigned(DECAY_CONTROL);
+                DECAY_AM <=  unsigned(DECAY_CONTROL);
             end if;
         end if;
     end if;

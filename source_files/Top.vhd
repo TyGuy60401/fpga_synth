@@ -25,7 +25,7 @@ use work.extra_signals.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -142,10 +142,13 @@ architecture Behavioral of Top is
     signal player_ens_ntrl : std_logic_vector (PLAYER_COUNT - 1 downto 0) := (others => '0');
     
     signal decays_test : decays_array := (others => (others => '0'));
+    constant Dampener: unsigned (7 downto 0) := x"78";
+    signal Mult_overflow: unsigned (19 downto 0);
     
     constant max_decay : decays_array := (others => (others => '1'));
     
 begin
+
     process (CLK)
     begin
         case MIDI_SW is
@@ -154,6 +157,7 @@ begin
             when others =>
                 serial_ntrl <= MIDI_IN;
         end case;
+        Mult_overflow <= (unsigned(SUM_ntrl) * Dampener) / 128; 
     end process;
 
     SUMMER_INST : Summer port map (
@@ -165,7 +169,7 @@ begin
 
         
     TRANSMITTER_INST : Transmitter port map (
-        SUM => SUM_ntrl,
+        SUM => std_logic_vector(Mult_overflow(11 downto 0)),
         CLK => CLK,
         SCK => SCLK,
         BUSY => SYNC,
@@ -229,5 +233,5 @@ begin
         SDATA => SER_OUT);
 
     LED <= PL_ACT_ntrl(7 downto 0);
-    LED2 <= player_ens_ntrl(7 downto 0);
+    LED2 <= '0'&velocities_ntrl(0);
 end Behavioral;
