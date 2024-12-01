@@ -19,13 +19,18 @@ end Summer;
 
 architecture Behavioral of Summer is
 
+signal cnt: integer := 0;
+signal slow_clk: std_logic := '0';
+
 begin
-    process(PL_ACT)
+    process(slow_CLK)
         variable int_PL_TOT: integer;
         variable ACT: integer;
         variable int_SUM: integer;
         variable round: integer;
     begin
+    
+    if rising_edge(slow_clk) then
         int_PL_TOT := 0;
         ACT := 0;
         if PL_ACT(0) = '1' then
@@ -64,15 +69,28 @@ begin
         if ACT > 0 then                 
             round := int_PL_TOT mod ACT;
             if round > 3 then
-                int_SUM := int_PL_TOT / ACT + 1;
+                int_SUM := int_PL_TOT / 8; --ACT + 1;
             else
-                int_SUM := int_PL_TOT / ACT;
+                int_SUM := int_PL_TOT / 8; --ACT;
             end if;
         else
             int_SUM := 2048;
         end if;
             
         SUM <= std_logic_vector(to_unsigned(int_SUM, 12));
+        end if;
         
     end process;
+    
+process (clk) begin
+    if rising_edge(clk) then
+        if cnt <= 521 then
+            cnt <= cnt + 1;
+            slow_clk <= slow_clk;
+        else
+            cnt <= 0;
+            slow_clk <= NOT(slow_clk);
+        end if;
+    end if;
+end process;
 end Behavioral;
