@@ -90,7 +90,7 @@ process (curr_state, PLY_ACT_V) begin
         when PLAYING =>
             s_WAVE <= (curr_note * unsigned(S_VEL)) / 128;
             if PLY_ACT_V = '1' then
-                next_state <= PLAYING;
+                next_state <= START;
             else
                 next_state <= WAITING;
             end if;

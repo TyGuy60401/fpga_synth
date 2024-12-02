@@ -80,7 +80,7 @@ architecture Behavioral of Top is
     
     component Summer is
     Port ( PL_array : in player_array;
-           PL_ACT : in STD_LOGIC_VECTOR (7 downto 0);
+           PL_ACT : in STD_LOGIC_VECTOR (PLAYER_COUNT - 1 downto 0);
            CLK : in STD_LOGIC;
            SUM : out STD_LOGIC_VECTOR (11 downto 0));
     end component;
@@ -138,7 +138,7 @@ architecture Behavioral of Top is
     signal wait_counts_ntrl : wait_counts_array := (others => (others => '0'));
     signal channels_ntrl : channels_array := (others => (others => '0'));
     signal velocities_ntrl : velocities_array := (others => (others => '0'));
-    signal decays_ntrl : decays_array := (others => (others => '0'));
+    signal decays_ntrl : decays_array := (others => x"40");
     signal player_ens_ntrl : std_logic_vector (PLAYER_COUNT - 1 downto 0) := (others => '0');
     
     signal decays_test : decays_array := (others => (others => '0'));
@@ -232,6 +232,6 @@ begin
         LOAD => RDY_ntrl,
         SDATA => SER_OUT);
 
-    LED <= PL_ACT_ntrl;
+    LED <= PL_ACT_ntrl(7 downto 0);
     LED2 <= '0'&velocities_ntrl(0);
 end Behavioral;

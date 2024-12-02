@@ -61,7 +61,7 @@ architecture Behavioral of MIDI_LOGIC is
     signal hash : std_logic_vector (9 downto 0) := "0000000000";
     signal control : std_logic_vector (6 downto 0) := "0000000";
 
-    type hash_array is array (0 to 7) of std_logic_vector (9 downto 0);
+    type hash_array is array (0 to PLAYER_COUNT - 1) of std_logic_vector (9 downto 0);
     signal hash_arr : hash_array := (others => (others => '0'));
 
     type channel_decays_array is array (0 to 2) of std_logic_vector (6 downto 0);
@@ -166,7 +166,7 @@ begin
                     cs <= W8;
                 when DC2_1 =>
                     state <= x"09";
-                    if control = x"DA" then
+                    if control = x"21" then
                         cs <= DC2_2;
                     else
                         cs <= idle;
