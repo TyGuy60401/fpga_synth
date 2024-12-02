@@ -97,7 +97,6 @@ architecture Behavioral of Top is
         Port ( NOTE_PL : in STD_LOGIC_VECTOR (23 downto 0);
                CLK_PL : in STD_LOGIC;
                RST_PL : in STD_LOGIC;
-               PLAY_PL : in STD_LOGIC;
                TONE_PL : in STD_LOGIC_VECTOR (1 downto 0);
                WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
     end component;
@@ -105,7 +104,6 @@ architecture Behavioral of Top is
     component Velocity is
     Port ( WAVE_IN_V : in STD_LOGIC_VECTOR (11 downto 0);
            VELOCITY_V : in STD_LOGIC_VECTOR (6 downto 0);
-           PLY_ACT_V: in STD_LOGIC;
            CLK_V : in STD_LOGIC;
            WAVE_OUT_V : out STD_LOGIC_VECTOR (11 downto 0)
            );        
@@ -118,8 +116,7 @@ architecture Behavioral of Top is
            DECAY_CONTROL: in STD_LOGIC_VECTOR (6 downto 0);
            WAVE_IN_D : in STD_LOGIC_VECTOR (11 downto 0);
            PLY_ACT_D : out STD_LOGIC;
-           WAVE_OUT_D : out STD_LOGIC_VECTOR (11 downto 0);
-           DEC_TEST_OUT: out STD_LOGIC_VECTOR (6 downto 0));
+           WAVE_OUT_D : out STD_LOGIC_VECTOR (11 downto 0));
     end component Decay;
 
     signal serial_ntrl : STD_LOGIC := '0';
@@ -138,7 +135,7 @@ architecture Behavioral of Top is
     signal wait_counts_ntrl : wait_counts_array := (others => (others => '0'));
     signal channels_ntrl : channels_array := (others => (others => '0'));
     signal velocities_ntrl : velocities_array := (others => (others => '0'));
-    signal decays_ntrl : decays_array := (others => x"40");
+    signal decays_ntrl : decays_array := (others => "100"&x"0");
     signal player_ens_ntrl : std_logic_vector (PLAYER_COUNT - 1 downto 0) := (others => '0');
     
     signal decays_test : decays_array := (others => (others => '0'));
@@ -200,7 +197,6 @@ begin
             note_pl => wait_counts_ntrl(i),
             clk_pl => CLK,
             rst_pl => RST,
-            play_pl => player_ens_ntrl(i),
             tone_pl => channels_ntrl(i),
             wave_o_pl => pl_array_ntrl(i));
     end generate player_gen;
@@ -209,7 +205,6 @@ begin
         VEL: component velocity port map(
            WAVE_IN_V => pl_array_ntrl(i),
            VELOCITY_V => velocities_ntrl(i),
-           PLY_ACT_V => player_ens_ntrl(i),
            CLK_V => CLK,
            WAVE_OUT_V => VEL_array_ntrl(i));
     end generate velocity_gen;
@@ -222,8 +217,7 @@ begin
            DECAY_CONTROL => decays_ntrl(i),
            WAVE_IN_D => VEL_array_ntrl(i),
            PLY_ACT_D => PL_ACT_ntrl(i),
-           WAVE_OUT_D => DEC_array_ntrl(i),
-           DEC_TEST_OUT => decays_test(i));
+           WAVE_OUT_D => DEC_array_ntrl(i));
     end generate decay_gen;
 
     uart_tx_inst: UART_TX port map (

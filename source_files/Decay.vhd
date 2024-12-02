@@ -38,8 +38,7 @@ entity Decay is
            DECAY_CONTROL: in STD_LOGIC_VECTOR (6 downto 0);
            WAVE_IN_D : in STD_LOGIC_VECTOR (11 downto 0);
            PLY_ACT_D : out STD_LOGIC;
-           WAVE_OUT_D : out STD_LOGIC_VECTOR (11 downto 0);
-           DEC_TEST_OUT: out STD_LOGIC_VECTOR (6 downto 0));
+           WAVE_OUT_D : out STD_LOGIC_VECTOR (11 downto 0));
 end Decay;
 
 architecture Behavioral of Decay is
@@ -59,7 +58,6 @@ signal cnt: integer;
 begin
 
 s_WAVE <= WAVE_IN_D;
-DEC_TEST_OUT <= std_logic_vector(DECAY_NOTE(6 downto 0));
 
 -- COMBINATIONAL LOGIC FOR STATE MACHINE
 process (curr_state, PLAY_D, DECAY_AM) begin
@@ -135,8 +133,8 @@ process (CLK_D, RST_D, curr_state) begin
             cnt <= 0;
         elsif curr_state = PLAYING then
             cnt <= 0;
-            DECAY_AM <=  unsigned(DECAY_CONTROL);
-        elsif cnt <= 1562500 and curr_state = DECAY then
+            DECAY_AM <= unsigned(DECAY_CONTROL);
+        elsif cnt <= 1562500 and curr_state = DECAY then --1562500
             cnt <= cnt + 1;
         else
             cnt <= 0;

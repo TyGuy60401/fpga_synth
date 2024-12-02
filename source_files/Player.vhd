@@ -35,9 +35,7 @@ entity Player is
     Port ( NOTE_PL : in STD_LOGIC_VECTOR (23 downto 0);
            CLK_PL : in STD_LOGIC;
            RST_PL : in STD_LOGIC;
-           PLAY_PL : in STD_LOGIC;
            TONE_PL : in STD_LOGIC_VECTOR (1 downto 0);
-           LOAD_PL : out STD_LOGIC;
            WAVE_O_PL : out STD_LOGIC_VECTOR (11 downto 0));
 end Player;
 
@@ -47,37 +45,43 @@ component Freq_gen is
     Port ( NOTE_FG : in STD_LOGIC_VECTOR (23 downto 0);
            CLK_FG : in STD_LOGIC;
            RST_FG : in STD_LOGIC;
-           NOTE_INDEX_FG : out STD_LOGIC_VECTOR (5 downto 0));
+           NOTE_INDEX_FG : out STD_LOGIC_VECTOR (6 downto 0));
 end component Freq_gen;
 
-component sin_gen_bram is
-    Port ( clk_sin : in STD_LOGIC;
-           en_sin : in STD_LOGIC;
-           we_sin : in STD_LOGIC_VECTOR (0 downto 0);
-           addr_sin : in STD_LOGIC_VECTOR (5 downto 0);
-           din_sin : in STD_LOGIC_VECTOR (11 downto 0);
-           dout_sin : out STD_LOGIC_VECTOR (11 downto 0));
-end component sin_gen_bram;
+component sin_high_res IS
+  PORT (
+    clka : IN STD_LOGIC;
+    ena : IN STD_LOGIC;
+    wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    addra : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
+    dina : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
+    douta : OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
+  );
+END component sin_high_res;
 
-component tri_gen_bram is
-    Port ( clk_tri : in STD_LOGIC;
-           en_tri : in STD_LOGIC;
-           we_tri : in STD_LOGIC_VECTOR (0 downto 0);
-           addr_tri : in STD_LOGIC_VECTOR (5 downto 0);
-           din_tri : in STD_LOGIC_VECTOR (11 downto 0);
-           dout_tri : out STD_LOGIC_VECTOR (11 downto 0));
-end component tri_gen_bram;
+component Tri_high_res IS
+  PORT (
+    clka : IN STD_LOGIC;
+    ena : IN STD_LOGIC;
+    wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    addra : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
+    dina : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
+    douta : OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
+  );
+END component Tri_high_res;
 
-component square_gen_bram is
-    Port ( clk_sqr : in STD_LOGIC;
-           en_sqr : in STD_LOGIC;
-           we_sqr : in STD_LOGIC_VECTOR (0 downto 0);
-           addr_sqr : in STD_LOGIC_VECTOR (5 downto 0);
-           din_sqr : in STD_LOGIC_VECTOR (11 downto 0);
-           dout_sqr : out STD_LOGIC_VECTOR (11 downto 0));
-end component square_gen_bram;
+component sqr_high_res IS
+  PORT (
+    clka : IN STD_LOGIC;
+    ena : IN STD_LOGIC;
+    wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    addra : IN STD_LOGIC_VECTOR(6 DOWNTO 0);
+    dina : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
+    douta : OUT STD_LOGIC_VECTOR(11 DOWNTO 0)
+  );
+END component sqr_high_res;
 
-signal s_addr : STD_LOGIC_VECTOR (5 downto 0);
+signal s_addr : STD_LOGIC_VECTOR (6 downto 0);
 
 signal s_sin_out : STD_LOGIC_VECTOR (11 downto 0);
 signal s_tri_out : STD_LOGIC_VECTOR (11 downto 0);
@@ -94,31 +98,31 @@ U0: freq_gen port map(
     NOTE_INDEX_FG => s_addr
 );
 
-U1: sin_gen_bram port map(
-    clk_sin => CLK_PL,
-    en_sin => '1',
-    we_sin => "0",
-    addr_sin => s_addr,
-    din_sin => x"000",
-    dout_sin => s_sin_out
+U1: sin_high_res port map(
+    clka => CLK_PL,
+    ena => '1',
+    wea => "0",
+    addra => s_addr,
+    dina => x"000",
+    douta => s_sin_out
 );
 
-U2: tri_gen_bram port map(
-    clk_tri => CLK_PL,
-    en_tri => '1',
-    we_tri => "0",
-    addr_tri => s_addr,
-    din_tri => x"000",
-    dout_tri => s_tri_out
+U2: tri_high_res port map(
+    clka => CLK_PL,
+    ena => '1',
+    wea => "0",
+    addra => s_addr,
+    dina => x"000",
+    douta => s_tri_out
 );
 
-U3: square_gen_bram port map(
-    clk_sqr => CLK_PL,
-    en_sqr => '1',
-    we_sqr => "0",
-    addr_sqr => s_addr,
-    din_sqr => x"000",
-    dout_sqr => s_sqr_out
+U3: sqr_high_res port map(
+    clka => CLK_PL,
+    ena => '1',
+    wea => "0",
+    addra => s_addr,
+    dina => x"000",
+    douta => s_sqr_out
 );
 
 WAVE_O_PL <= s_TONE_CHOICE_OUT;
