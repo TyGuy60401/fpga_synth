@@ -69,9 +69,9 @@ begin
         if ACT > 0 then                 
             round := int_PL_TOT mod ACT;
             if round > 3 then
-                int_SUM := int_PL_TOT / 8; --ACT + 1;
+                int_SUM := int_PL_TOT / ACT + 1;
             else
-                int_SUM := int_PL_TOT / 8; --ACT;
+                int_SUM := int_PL_TOT / ACT;
             end if;
         else
             int_SUM := 2048;

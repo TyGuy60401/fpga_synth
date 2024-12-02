@@ -157,7 +157,7 @@ begin
             when others =>
                 serial_ntrl <= MIDI_IN;
         end case;
-        Mult_overflow <= (unsigned(SUM_ntrl) * Dampener) / 128; 
+        --Mult_overflow <= (unsigned(SUM_ntrl) * Dampener) / 128; 
     end process;
 
     SUMMER_INST : Summer port map (
@@ -169,7 +169,7 @@ begin
 
         
     TRANSMITTER_INST : Transmitter port map (
-        SUM => std_logic_vector(Mult_overflow(11 downto 0)),
+        SUM => SUM_ntrl,
         CLK => CLK,
         SCK => SCLK,
         BUSY => SYNC,
